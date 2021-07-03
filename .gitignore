@@ -1,0 +1,9 @@
+/input/
+/auto-traffic-monitoring/results/
+/external/
+/previous_results/
+/previous_code/
+/detection/detectron2_model_weights/
+/camera/models/
+/tests/
+/tracking/deep_sort_model_weights/
