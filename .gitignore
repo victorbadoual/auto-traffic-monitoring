@@ -4,8 +4,8 @@
 /previous_code/
 /detection/detectron2_model_weights/
 /camera/models/
-/tests/
 /tracking/deep_sort_model_weights/
 /input/scripts/frames/
 /input/landmarks/
 /input/videos/
+/tests/results/
