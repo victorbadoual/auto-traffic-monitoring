@@ -100,9 +100,10 @@ def automatic_camera_calibration(frame_path, output_dir, camera_matrix, distorti
     x = [p[0] for p in camera_points]
     y = [p[1] for p in camera_points]
     z = [p[2] for p in camera_points]
-    translation_vectors = (sum(x) / len(camera_points), sum(y) / len(camera_points), sum(z) / len(camera_points))
+    translation_vectors = [[sum(x) / len(camera_points)], [sum(y) / len(camera_points)],
+                           [- sum(z) / len(camera_points)]]
 
-    translation_vectors = np.asarray(translation_vectors).T
+    translation_vectors = np.asarray(translation_vectors)
     rotation_matrix = np.asarray(rotation_matrix)
 
     rotation_vectors = cv2.Rodrigues(np.asmatrix(rotation_matrix, dtype='float64'))[0]

@@ -1,4 +1,3 @@
-/input/
 /auto-traffic-monitoring/results/
 /external/
 /previous_results/
@@ -7,3 +6,6 @@
 /camera/models/
 /tests/
 /tracking/deep_sort_model_weights/
+/input/scripts/frames/
+/input/landmarks/
+/input/videos/

@@ -30,26 +30,26 @@ if __name__ == "__main__":
     args = parse_args()
 
     cur_path = os.path.dirname(__file__)
-    video_path = os.path.join(cur_path, '../auto-traffic-monitoring', args.video_path)
-    pickle_path = os.path.join(cur_path, '../auto-traffic-monitoring', args.camera_params)
+    video_path = os.path.join(cur_path, '..', args.video_path)
+    pickle_path = os.path.join(cur_path, '..', args.camera_params)
     with open(pickle_path, 'rb') as handle:
         camera_parameters = pickle.load(handle)
 
     video_name = os.path.basename(video_path)
-    detection_output_path = os.path.join(cur_path, '../auto-traffic-monitoring', 'results', video_name + "_detection.csv")
-    detection_3d_bounding_boxes_output_path = os.path.join(cur_path, '../auto-traffic-monitoring', 'results',
+    detection_output_path = os.path.join(cur_path, '..', 'results', video_name + "_detection.csv")
+    detection_3d_bounding_boxes_output_path = os.path.join(cur_path, '..', 'results',
                                                            video_name + "_detection_3d_bounding_boxes.csv")
-    pickle_output_path = os.path.join(cur_path, '../auto-traffic-monitoring', 'results', video_name + "_detection.pickle")
+    pickle_output_path = os.path.join(cur_path, '..', 'results', video_name + "_detection.pickle")
     detection_output = open(detection_output_path, "w+")
     detection_3d_bounding_boxes_output = open(detection_3d_bounding_boxes_output_path, "w+")
-    class_labels_path = os.path.join(cur_path, '../auto-traffic-monitoring', 'detection/labels', 'coco_labels.txt')
+    class_labels_path = os.path.join(cur_path, '..', 'detection/labels', 'coco_labels.txt')
     class_labels = np.genfromtxt(class_labels_path, delimiter=',', dtype=str)
 
     video_capture = cv2.VideoCapture(video_path)
     video_width = int(video_capture.get(cv2.CAP_PROP_FRAME_WIDTH))
     video_height = int(video_capture.get(cv2.CAP_PROP_FRAME_HEIGHT))
     fourcc = cv2.VideoWriter_fourcc(*'XVID')
-    video_output_path = os.path.join(cur_path, '../auto-traffic-monitoring', 'results', video_name + "_detection.mp4")
+    video_output_path = os.path.join(cur_path, '..', 'results', video_name + "_detection.mp4")
     video_output = cv2.VideoWriter(video_output_path, fourcc, 20, (video_width, video_height))
 
     detector = Detectron2Wrapper()

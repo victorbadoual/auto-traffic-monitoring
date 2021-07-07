@@ -19,7 +19,7 @@ sys.path.append('../detection')
 from camera.projection import back_projection
 
 MINIMUM_TRACK_LENGTH = 10
-MINIMUM_NON_STATIC_POSITION = 3
+MINIMUM_NON_STATIC_POSITION = 15
 
 
 def get_trajectories(tracking_path, detection_3d_bounding_boxes_path, trajectories_output):
@@ -54,7 +54,7 @@ def get_trajectories(tracking_path, detection_3d_bounding_boxes_path, trajectori
         # Get tracking data corresponding to current tracking id
         indexes = np.where(tracking_ids == unique_ids[i])[0]
 
-        # Skip tracks with less than 5 frames
+        # Skip tracks with less than MINIMUM_TRACK_LENGTH frames
         if len(indexes) < MINIMUM_TRACK_LENGTH:
             continue
 
@@ -66,7 +66,7 @@ def get_trajectories(tracking_path, detection_3d_bounding_boxes_path, trajectori
         for tl_image_point in tl_image_points:
             tl_world_point = back_projection(tl_image_point, camera_parameters)
             # Skip points outside of tracking zone
-            if abs(tl_world_point[0]) > 50 or abs(tl_world_point[1]) > 100:
+            if abs(tl_world_point[0]) > 100 or abs(tl_world_point[1]) > 100:
                 continue
             tl_world_points.append(back_projection(tl_image_point, camera_parameters))
         tl_world_points = np.asarray(tl_world_points)
@@ -79,16 +79,20 @@ def get_trajectories(tracking_path, detection_3d_bounding_boxes_path, trajectori
             bounding_boxes_bottom_center.append((x, y))
         bounding_boxes_bottom_center = np.asarray(bounding_boxes_bottom_center)
 
+        # Uncomment to use 2D bounding boxes for trajectories
+        # bounding_boxes_bottom_center = tl_world_points
+
         # Remove objects static for a long time
         if len(bounding_boxes_bottom_center) > 0:
             max_distance_x = max(bounding_boxes_bottom_center[:, 0]) - min(bounding_boxes_bottom_center[:, 0])
             max_distance_y = max(bounding_boxes_bottom_center[:, 1]) - min(bounding_boxes_bottom_center[:, 1])
-            if abs(max_distance_x) < MINIMUM_NON_STATIC_POSITION or abs(max_distance_y) < MINIMUM_NON_STATIC_POSITION:
+            if abs(max_distance_x) < MINIMUM_NON_STATIC_POSITION and abs(max_distance_y) < MINIMUM_NON_STATIC_POSITION:
                 continue
 
         # Scatter projected points on plot
         if len(bounding_boxes_bottom_center) > 0:
             plt.scatter(bounding_boxes_bottom_center[:, 0], bounding_boxes_bottom_center[:, 1])
+            plt.text(bounding_boxes_bottom_center[0, 0], bounding_boxes_bottom_center[0, 1], str(unique_ids[i]))
 
     # Format plot
     plt.xlabel("x")
@@ -205,13 +209,8 @@ if __name__ == "__main__":
     trajectories_output_viou = os.path.join(cur_path, '..', 'results', video_name + "_trajectories_viou.png")
     trajectories_output_deep_sort = os.path.join(cur_path, '..', 'results', video_name + "_trajectories_deep_sort.png")
     video_output_path = os.path.join(cur_path, '..', 'results', video_name + "_tracking.mp4")
-    detection_ids_path = os.path.join(cur_path, '..', 'results', video_name + "_detection.pickle")
     detection_3d_bounding_boxes_path = os.path.join(cur_path, '..', 'results',
                                                     video_name + "_detection_3d_bounding_boxes.csv")
-
-    iou.track(detection_path, tracking_path_iou)
-    viou.track(frames_path, detection_path, tracking_path_viou)
-    deep_sort.track(video_path, detection_path, tracking_path_deep_sort)
 
     get_tracking_video(tracking_path_deep_sort, detection_3d_bounding_boxes_path, video_path, video_output_path)
 
